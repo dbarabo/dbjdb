@@ -1,6 +1,5 @@
 package ru.barabo.db
 
-import org.slf4j.LoggerFactory
 import ru.barabo.db.annotation.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
@@ -157,11 +156,7 @@ internal fun isNullIdItem(entityItem: Any): Boolean {
 
     val member = getIdMember(entityItem::class.java)
 
-//    logger.error("member=$member")
-//    logger.error("entityItem=$entityItem")
-
     val getValue = member?.getter?.call(entityItem)
-//    logger.error("getValue=$getValue")
 
     return getValue == null
 }
@@ -357,8 +352,6 @@ fun getPropertyByColumn(row :Class<*>) :Map<String, KMutableProperty<*>> {
     return propertyByColumn
 }
 
-private val logger = LoggerFactory.getLogger(MemberConverter::class.simpleName)!!
-
 @Throws(SessionException::class)
 internal fun valueToJava(entity: Any, value: Any, member: KMutableProperty<*>, columnName :String) :Any? {
 
@@ -464,12 +457,8 @@ internal fun getSqlParamsFromEntity(entity: Any, memberColumns: Collection<Membe
 
     val params: Array<Any?> = arrayOfNulls(memberColumns.size)
 
-    //logger.error("entity=$entity")
-    //logger.error("memberColumns.size=${memberColumns.size}")
-
     for ((index, member) in memberColumns.withIndex()) {
         params[index] = member.getSqlValueFromJavaObject(entity)
-        //logger.error("params[$index]=${params[index]}")
     }
 
     return params

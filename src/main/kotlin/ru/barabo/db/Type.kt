@@ -14,11 +14,11 @@ enum class Type(val clazz: Class<*>, val sqlType: Int,
 
     BYTE(Byte::class.javaObjectType, java.sql.Types.TINYINT, { (it as Number).toByte() }, { it.toByteOrNull() }, { (it as Number).toByte() + 1 }  ),
 
-    SMALLINT(Short::class.javaObjectType, java.sql.Types.SMALLINT, { (it as Number).toShort() }, { it.toShortOrNull() }, { (it as kotlin.Number).toShort() + 1 } ),
+    SMALLINT(Short::class.javaObjectType, java.sql.Types.SMALLINT, { (it as Number).toShort() }, { it.toShortOrNull() }, { (it as Number).toShort() + 1 } ),
 
-    INTP(Int::class.javaPrimitiveType!!, java.sql.Types.INTEGER, { (it as Number).toInt() },  { it.toIntOrNull() }, { (it as kotlin.Number).toInt() + 1 }  ),
+    INTP(Int::class.javaPrimitiveType!!, java.sql.Types.INTEGER, { (it as Number).toInt() },  { it.toIntOrNull() }, { (it as Number).toInt() + 1 }  ),
 
-    INT(Int::class.javaObjectType, java.sql.Types.INTEGER, { (it as Number).toInt() },  { it.toIntOrNull() }, { (it as kotlin.Number).toInt() + 1 }  ),
+    INT(Int::class.javaObjectType, java.sql.Types.INTEGER, { (it as Number).toInt() },  { it.toIntOrNull() }, { (it as Number).toInt() + 1 }  ),
 
     LONGP(Long::class.javaPrimitiveType!!, java.sql.Types.BIGINT, { (it as Number).toLong() }, { it.toLongOrNull() }, { (it as Number).toLong() + 1L } ),
 
@@ -31,8 +31,8 @@ enum class Type(val clazz: Class<*>, val sqlType: Int,
     DECIMAL(Double::class.javaObjectType, java.sql.Types.DECIMAL, { (it as Number).toDouble()}, {it.toDoubleOrNull() }, { (it as Number).toDouble() + 1.0} ),
 
     DATETIME(java.time.LocalDateTime::class.javaObjectType, java.sql.Types.TIMESTAMP,
-            { x -> (x as java.util.Date).toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime()},
-            { x -> x.toLongOrNull()?.let{ java.time.Instant.ofEpochMilli(it).atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() } },
+            { x -> (x as Date).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()},
+            { x -> x.toLongOrNull()?.let{ java.time.Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDateTime() } },
             {},
             {java.sql.Date(Date.from((it as LocalDateTime).atZone(ZoneId.systemDefault()).toInstant()).time) }),
 
@@ -42,27 +42,26 @@ enum class Type(val clazz: Class<*>, val sqlType: Int,
         {x -> x} ),
 
     DATE(java.time.LocalDate::class.javaObjectType, java.sql.Types.TIMESTAMP,
-            { x -> (x as java.util.Date).toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()},
-            { x -> x.toLongOrNull()?.let{ java.time.Instant.ofEpochMilli(it).atZone(java.time.ZoneId.systemDefault()).toLocalDate() } },
+            { x -> (x as Date).toInstant().atZone(ZoneId.systemDefault()).toLocalDate()},
+            { x -> x.toLongOrNull()?.let{ java.time.Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() } },
             {},
             {java.sql.Date(Date.from((it as LocalDate).atStartOfDay(ZoneId.systemDefault()).toInstant()).time) }),
 
     BIG_DECIMAL(BigDecimal::class.javaObjectType, java.sql.Types.NUMERIC,
-            {x -> if(x is BigDecimal) x else java.math.BigDecimal(x.toString()) },
+            {x -> if(x is BigDecimal) x else BigDecimal(x.toString()) },
             { it.toBigDecimalOrNull() },
             { (it as BigDecimal).add(BigDecimal.ONE) },
-            { (it as? BigDecimal)?.toString() ?: java.math.BigDecimal(it.toString()).toString() });
+            { (it as? BigDecimal)?.toString() ?: BigDecimal(it.toString()).toString() });
 
     companion object {
-       // private val logger = LoggerFactory.getLogger(Type::class.java)
 
-        private val HASH_CLASS_TYPES = Type.values().map { it -> Pair(it.clazz, it.sqlType) }.toMap()
+        private val HASH_CLASS_TYPES = values().associate { Pair(it.clazz, it.sqlType) }
 
         fun getSqlTypeByClass(clazz: Class<*>) :Int = HASH_CLASS_TYPES[clazz] ?:-1
 
-        private val HASH_TYPES_CLASS = Type.values().map { it -> Pair(it.sqlType, it.clazz) }.toMap()
+        private val HASH_TYPES_CLASS = values().associate { Pair(it.sqlType, it.clazz) }
 
-        private val CONVERTER_TO_SQL_BY_SQLTYPE = Type.values().map { it -> Pair(it.sqlType, it.converterToDb) }.toMap()
+        private val CONVERTER_TO_SQL_BY_SQLTYPE = values().associate { Pair(it.sqlType, it.converterToDb) }
 
         fun convertToSqlBySqlType(sqlType: Int, javaValue: Any): Any? = CONVERTER_TO_SQL_BY_SQLTYPE[sqlType]?.invoke(javaValue)
 
@@ -70,22 +69,21 @@ enum class Type(val clazz: Class<*>, val sqlType: Int,
 
         @Throws(SessionException::class)
         fun getClassBySqlType(typeSql:Int) :Class<*> {
-           // logger.info("typeSql=$typeSql")
 
             return HASH_TYPES_CLASS[typeSql] ?: throw SessionException(errorNotFoundClassType(typeSql))
         }
 
         fun increment(clazz :Class<*>, value: Any) = HASH_CLASS_INCREMENT[clazz]!!.invoke(value)
 
-        private val HASH_CLASS_INCREMENT = Type.values().map { it -> Pair(it.clazz, it.increment) }.toMap()
+        private val HASH_CLASS_INCREMENT = values().associate { Pair(it.clazz, it.increment) }
 
-        private val HASH_CLASS_CONVERTER = Type.values().map { it -> Pair(it.clazz, it.converterToJava) }.toMap()
+        private val HASH_CLASS_CONVERTER = values().associate { Pair(it.clazz, it.converterToJava) }
 
-        fun convertValueToJavaTypeByClass(value :Any, clazz :Class<*>) :Any? = HASH_CLASS_CONVERTER[clazz]?.invoke(value)
+        fun convertValueToJavaTypeByClass(value :Any, clazz :Class<*>): Any? = HASH_CLASS_CONVERTER[clazz]?.invoke(value)
 
-        private val HASH_CLASS_STRING_CONVERTER = Type.values().map { it -> Pair(it.clazz, it.converterToJavaFromString) }.toMap()
+        private val HASH_CLASS_STRING_CONVERTER = values().associate { Pair(it.clazz, it.converterToJavaFromString) }
 
-        fun convertStringValueToJavaByClass(value: String, clazz: Class<*>) :Any? = HASH_CLASS_STRING_CONVERTER[clazz]?.invoke(value)
+        fun convertStringValueToJavaByClass(value: String, clazz: Class<*>): Any? = HASH_CLASS_STRING_CONVERTER[clazz]?.invoke(value)
 
         fun isConverterExists(clazz :Class<*>) :Boolean {
             return HASH_CLASS_CONVERTER[clazz] != null
@@ -132,4 +130,3 @@ enum class Type(val clazz: Class<*>, val sqlType: Int,
 fun LocalDate.toSqlDate() = java.sql.Date(Date.from(this.atStartOfDay(ZoneId.systemDefault()).toInstant()).time)
 
 fun LocalDateTime.toSqlDate() = java.sql.Date(Date.from(this.atZone(ZoneId.systemDefault()).toInstant()).time)
-

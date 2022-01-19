@@ -10,5 +10,5 @@ enum class EditType {
     ALL,
     CHANGE_CURSOR;
 
-    fun isEditable() = this in listOf(EditType.ALL, EditType.DELETE, EditType.EDIT, EditType.INSERT)
+    fun isEditable() = this in listOf(ALL, DELETE, EDIT, INSERT)
 }

@@ -1,11 +1,9 @@
 package ru.barabo.db
 
-import org.slf4j.LoggerFactory
 import ru.barabo.db.annotation.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredMemberProperties
@@ -16,8 +14,6 @@ import kotlin.reflect.jvm.javaType
 open class TemplateQuery (private val query :Query) {
 
     companion object {
-
-        private val logger = LoggerFactory.getLogger(TemplateQuery::class.simpleName)!!
 
         private fun errorNotFoundAnnotationSelectQuery(className :String?) = "Annotation @SelectQuery not found for class $className"
 
@@ -269,10 +265,10 @@ open class TemplateQuery (private val query :Query) {
     }
 
     /**
-     * из аннотаций вытаскиваем данные для sql
+     * from annotation extract data for sql
      */
     @Throws(SessionException::class)
-    private fun getFieldsDataUpdate(item :Any) :ArrayList<FieldData> {
+    private fun getFieldsDataUpdate(item: Any): ArrayList<FieldData> {
 
         val fieldsData = ArrayList<FieldData>()
 
@@ -298,8 +294,7 @@ open class TemplateQuery (private val query :Query) {
     }
 
     /**
-     * преобразует значение value к типу type
-     * Если value == null => return Class.Type
+     * if value == null => return Class.Type
      */
     @Throws(SessionException::class)
     private fun valueToSql(value :Any?, type :Int?, converterClazz : KClass<*>?) :Any {

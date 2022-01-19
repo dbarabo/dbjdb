@@ -7,7 +7,7 @@ import java.io.*
 import java.sql.*
 import java.util.concurrent.atomic.AtomicLong
 
-open class Query (protected val dbConnection :DbConnection) {
+open class Query (protected val dbConnection: DbConnection) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(Query::class.simpleName)!!
@@ -66,9 +66,6 @@ open class Query (protected val dbConnection :DbConnection) {
 
     fun selectWithMetaData(query :String, params :Array<Any?>? = null,
                            sessionSetting : SessionSetting = SessionSetting(true) ): WithMetaData {
-
-       // logger.info("select=$query")
-       // params?.forEach { logger.info("param=$it") }
 
         val (session, statement, resultSet) = prepareSelect(query, params, sessionSetting)
 
@@ -326,9 +323,9 @@ open class Query (protected val dbConnection :DbConnection) {
                        sessionSetting : SessionSetting,
                        outParamTypes :IntArray? = null): List<Any?>? {
 
-        logger.error("!!!!!!!!!!!!!!!!!$query")
+        logger.info("execute=$query")
 
-        params?.forEach { logger.error(it.toString()) }
+        params?.forEach { logger.info(it.toString()) }
 
         val session = dbConnection.getSession(sessionSetting)
 
@@ -346,7 +343,7 @@ open class Query (protected val dbConnection :DbConnection) {
 
         logger.info("query=$query")
 
-        params?.forEach { logger.debug(it?.toString()) }
+        params?.forEach { logger.info(it?.toString()) }
 
         val statement = try {
             session.session.prepareCall(query)
@@ -490,7 +487,6 @@ open class Query (protected val dbConnection :DbConnection) {
         return file
     }
 
-
     private fun closeQueryData(session: Session,
                                transactType: TransactType = TransactType.ROLLBACK,
                                statement: Statement? = null,
@@ -564,7 +560,7 @@ fun CallableStatement.setParams(outParamTypes :IntArray, inParams :Array<Any?>? 
 
     setParams(inParams, outParamTypes.size)
 
-    return this// setParams(inParams, outParamTypes.size) as CallableStatement
+    return this
 }
 
 private class QueryRequest(val query :String,
@@ -574,5 +570,4 @@ private class QueryRequest(val query :String,
                         val fileInputStream :InputStream? = null)
 
 data class WithMetaData(val data: List<Array<Any?>>, val columns: List<String>, val types: List<Int>)
-
 

@@ -4,7 +4,6 @@ import java.sql.Connection
 import java.sql.SQLException
 
 open class DbConnection(protected val dbSetting: DbSetting) {
-   // private val logger = LoggerFactory.getLogger(DbConnection::class.java)
 
     companion object {
 
@@ -19,7 +18,7 @@ open class DbConnection(protected val dbSetting: DbSetting) {
         Class.forName(dbSetting.driver)//.newInstance()
     }
 
-    fun isTestBase() = !dbSetting.url.contains("192.168.0.43")
+    open fun isTestBase() = !dbSetting.url.contains("192.168.0.43")
 
     @Throws(SessionException::class)
     fun getSession(sessionSetting :SessionSetting):Session {
