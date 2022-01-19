@@ -5,7 +5,7 @@ import ru.barabo.db.TemplateQuery
 
 open class StoreFilterService<T: Any>(orm: TemplateQuery, clazz: Class<T>) : StoreService<T, List<T>>(orm, clazz) {
 
-    private val filterdList = ArrayList<T>()
+    private lateinit var filterdList: MutableList<T>
 
     @Volatile private var isFiltered = false
 
@@ -53,7 +53,13 @@ open class StoreFilterService<T: Any>(orm: TemplateQuery, clazz: Class<T>) : Sto
 
     override fun initData() {
         isFiltered = false
-        filterdList.clear()
+
+        if(::filterdList.isInitialized) {
+            filterdList.clear()
+        } else {
+            filterdList = ArrayList()
+        }
+
         super.initData()
     }
 
