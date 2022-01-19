@@ -1,0 +1,22 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
+}
+
+group 'ru.barabo'
+version '0.9.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
+
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
+
+    //implementation group: 'com.oracle.database.jdbc', name: 'ojdbc8', version: '12.2.0.1'
+
+    implementation group: 'com.oracle.database.jdbc', name: 'ojdbc6', version: '11.2.0.4'
+}
