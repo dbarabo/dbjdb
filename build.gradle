@@ -1,18 +1,25 @@
+
+buildscript {
+    ext {
+        kotlinVersion = '1.6.10'
+    }
+}
+
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
+    id "org.jetbrains.kotlin.jvm" version "$kotlinVersion"
 }
 
 group 'ru.barabo'
-version '0.9.3'
+version '0.9.4'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-stdlib", version: "$kotlinVersion"
 
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: "$kotlinVersion"
 
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
 
