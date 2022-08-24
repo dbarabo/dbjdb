@@ -1,7 +1,7 @@
 
 buildscript {
     ext {
-        kotlinVersion = '1.6.10'
+        kotlinVersion = '1.7.10'
     }
 }
 
@@ -10,7 +10,7 @@ plugins {
 }
 
 group 'ru.barabo'
-version '0.9.5'
+version '0.9.6'
 
 repositories {
     mavenCentral()
