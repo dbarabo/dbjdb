@@ -103,8 +103,10 @@ open class TemplateQuery (private val query :Query) {
 
         val params = selectParams(row)
 
+        val idFieldValue = getFieldData(idValue as Any, idColumn).second
+
         val list = ArrayList<Any?>()
-        list += idValue
+        list += idFieldValue
 
         params?.let { list.addAll(it) }
 

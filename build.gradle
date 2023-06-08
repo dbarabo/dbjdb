@@ -1,17 +1,14 @@
-
 buildscript {
     ext {
-        kotlinVersion = '1.7.10'
+        kotlinVersion = '1.8.20'
     }
 }
 
 plugins {
-
     id "org.jetbrains.kotlin.jvm" version "$kotlinVersion"
-}
 
-group 'ru.barabo'
-version '0.9.6'
+    id 'maven-publish'
+}
 
 repositories {
     mavenCentral()
@@ -25,4 +22,19 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
 
     implementation group: 'com.oracle.database.jdbc', name: 'ojdbc6', version: '11.2.0.4'
+}
+
+group 'ru.barabo'
+version '0.9.7'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'ru.barabo'
+            artifactId = 'dbjdb'
+            version = '0.9.7'
+
+            from components.java
+        }
+    }
 }
