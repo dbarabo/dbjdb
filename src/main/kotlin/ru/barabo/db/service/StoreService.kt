@@ -38,7 +38,7 @@ abstract class StoreService<T: Any, out G>(protected val orm: TemplateQuery, val
 
     protected open fun afterSelectInit() {}
 
-    protected fun callBackSelectData(item: T) {
+    protected open fun callBackSelectData(item: T) {
 
         synchronized(dataList) { dataList.add(item) }
 
@@ -119,7 +119,7 @@ abstract class StoreService<T: Any, out G>(protected val orm: TemplateQuery, val
         return item
     }
 
-    private fun processStartLongTransactState(type: EditType) {
+    protected open fun processStartLongTransactState(type: EditType) {
         if(startedLongTransaction != LongTransactState.NONE_LONG_TRANSACT) {
             startedLongTransaction = LongTransactState.LONG_TRANSACT_MUST_REFRESH
         } else {
@@ -127,7 +127,7 @@ abstract class StoreService<T: Any, out G>(protected val orm: TemplateQuery, val
         }
     }
 
-    private fun processEndLongTransactState() {
+    protected open fun processEndLongTransactState() {
 
         if(startedLongTransaction == LongTransactState.LONG_TRANSACT_MUST_REFRESH) {
             startedLongTransaction = LongTransactState.NONE_LONG_TRANSACT

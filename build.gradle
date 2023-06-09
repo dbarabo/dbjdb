@@ -25,14 +25,14 @@ dependencies {
 }
 
 group 'ru.barabo'
-version '0.9.7'
+version '0.9.8'
 
 publishing {
     publications {
         maven(MavenPublication) {
             groupId = 'ru.barabo'
             artifactId = 'dbjdb'
-            version = '0.9.7'
+            version = '0.9.8'
 
             from components.java
         }
