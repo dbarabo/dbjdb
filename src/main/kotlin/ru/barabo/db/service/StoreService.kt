@@ -61,7 +61,6 @@ abstract class StoreService<T: Any, out G>(protected val orm: TemplateQuery, val
     open fun initData() {
         dataList.removeAll(dataList)
 
-        // orm.select(clazz, ::callBackSelectData)
         selectDefault()
 
         afterSelectInit()

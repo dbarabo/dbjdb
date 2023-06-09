@@ -31,23 +31,34 @@ open class StoreFilterService<T: Any>(orm: TemplateQuery, clazz: Class<T>) : Sto
 
         val idRow = selectedEntity() ?: return
 
-        orm.selectById(clazz, idRow, ::callBackSelectData)
+        orm.selectById(clazz, idRow, ::callBackSelectRow)
 
         sentRefreshAllListener(EditType.CHANGE_CURSOR)
     }
 
-    private fun callBackSelectRow(item: T) {
+    protected open fun callBackSelectRow(item: T) {
+
+        var selectedItem: T?
 
         synchronized(dataList) {
 
-            val selectedItem = selectedEntity() ?: return
+            selectedItem = selectedEntity() ?: return
 
             val index = dataList.indexOf(selectedItem)
 
             if(index < 0) return
 
-
             dataList[index] = item
+        }
+
+        if(isFiltered) {
+            synchronized(filterdList) {
+                val index = filterdList.indexOf(selectedItem)
+
+                if(index < 0) return
+
+                filterdList[index] = item
+            }
         }
     }
 
