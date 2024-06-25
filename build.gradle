@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlinVersion = '1.8.20'
+        kotlinVersion = '1.9.23'
     }
 }
 
@@ -19,20 +19,20 @@ dependencies {
 
     implementation group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: "$kotlinVersion"
 
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.13'
 
     implementation group: 'com.oracle.database.jdbc', name: 'ojdbc6', version: '11.2.0.4'
 }
 
 group 'ru.barabo'
-version '0.9.9'
+version '0.9.10'
 
 publishing {
     publications {
         maven(MavenPublication) {
             groupId = 'ru.barabo'
             artifactId = 'dbjdb'
-            version = '0.9.9'
+            version = '0.9.10'
 
             from components.java
         }

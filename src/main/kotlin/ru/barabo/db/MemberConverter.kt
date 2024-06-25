@@ -86,7 +86,7 @@ internal data class MemberConverter(private val member: KMutableProperty<*>,
 
         val javaType: Class<*> = member.returnType.javaType as Class<*>
 
-        val objectEntity = member.getter.call(parentEntity) ?: javaType.newInstance()
+        val objectEntity = member.getter.call(parentEntity) ?: javaType.getDeclaredConstructor().newInstance()
 
         setIdByString(javaType, objectEntity, value)
 
@@ -97,7 +97,7 @@ internal data class MemberConverter(private val member: KMutableProperty<*>,
 
         val javaType: Class<*> = member.returnType.javaType as Class<*>
 
-        val objectItem = member.getter.call(parentItem) ?: javaType.newInstance()
+        val objectItem = member.getter.call(parentItem) ?: javaType.getDeclaredConstructor().newInstance()
 
         setId(javaType, objectItem, value)
 
@@ -292,7 +292,7 @@ private fun KMutableProperty<*>.getMemberConvertor(): MemberConverter {
     return MemberConverter(this, converter as? ConverterValue, manyToOnePrefix)
 }
 
-private fun KClass<*>.instanceCreateOrGet() = this.objectInstance ?: this.java.newInstance()
+private fun KClass<*>.instanceCreateOrGet() = this.objectInstance ?: this.java.getDeclaredConstructor().newInstance()
 
 internal fun getIdColumnName(javaType: Class<*>): String? = getIdMember(javaType)?.findAnnotation<ColumnName>()?.name
 
@@ -360,7 +360,7 @@ internal fun valueToJava(entity: Any, value: Any, member: KMutableProperty<*>, c
     val converterClass = member.findAnnotation<Converter>()?.converterClazz
 
     if(converterClass != null) {
-        val instance = converterClass.objectInstance ?: converterClass.java.newInstance()
+        val instance = converterClass.objectInstance ?: converterClass.java.getDeclaredConstructor().newInstance()
 
         return (instance as ConverterValue).convertFromBase(value, javaType)
     }
@@ -428,7 +428,7 @@ private fun manyToOneValue(parentItem :Any, member :KMutableProperty<*>, columnN
 
     val column =
             if(objectValue == null) {
-                objectValue = javaType.newInstance()
+                objectValue = javaType.getDeclaredConstructor().newInstance()
 
                 ID_COLUMN
             } else {

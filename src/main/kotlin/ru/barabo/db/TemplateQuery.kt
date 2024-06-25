@@ -57,7 +57,7 @@ open class TemplateQuery (private val query :Query) {
             isNewRow :Boolean, value :Any?, column :String? ->
 
             if(isNewRow) {
-                val newItem = row.newInstance()
+                val newItem = row.getDeclaredConstructor().newInstance()
 
                 item?.let { callBack(it) }
 
@@ -92,7 +92,7 @@ open class TemplateQuery (private val query :Query) {
     }
 
     fun <T> selectParams(row :Class<T>): Array<Any?>? = if(ParamsSelect::class.java.isAssignableFrom(row)) {
-        (row.newInstance() as ParamsSelect).selectParams() } else null
+        (row.getDeclaredConstructor().newInstance() as ParamsSelect).selectParams() } else null
 
     @Throws(SessionException::class)
     fun <T> selectById(row :Class<T>, idValue: T, callBack :(row :T)->Unit) {
@@ -315,7 +315,7 @@ open class TemplateQuery (private val query :Query) {
         }
 
         if(converterClazz != null) {
-            val instance = converterClazz.objectInstance ?: converterClazz.java.newInstance()
+            val instance = converterClazz.objectInstance ?: converterClazz.java.getDeclaredConstructor().newInstance()
 
             return (instance as ConverterValue).convertToBase(value)
         }
